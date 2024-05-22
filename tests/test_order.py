@@ -3,8 +3,6 @@ import pytest
 import helpers
 from data import Urls
 from page_objects.order_page import OrderPage
-from locators.base_page_locators import BasePageLocators
-from locators.order_page_locators import OrderPageLocators
 
 
 class TestOrder:
@@ -15,7 +13,7 @@ class TestOrder:
         redirect_page = OrderPage(driver)
         redirect_page.open_base_url()
         redirect_page.click_header_order_button()
-        redirect_page.wait_until_element_is_visible(BasePageLocators.next_button)
+        redirect_page.wait_until_element_is_visible_order()
 
         assert redirect_page.show_current_url() == Urls.ORDER_PAGE_URL
 
@@ -25,7 +23,7 @@ class TestOrder:
         redirect_page = OrderPage(driver)
         redirect_page.open_base_url()
         redirect_page.click_header_order_button()
-        redirect_page.wait_until_element_is_visible(BasePageLocators.next_button)
+        redirect_page.wait_until_element_is_visible_order()
 
         assert redirect_page.show_current_url() == Urls.ORDER_PAGE_URL
 
@@ -61,7 +59,7 @@ class TestOrder:
         booking_page.click_next_button()
         booking_page.fill_about_order(comment)
         booking_page.click_finish_order_button()
-        booking_page.wait_until_element_is_clickable(OrderPageLocators.confidence_yes_button)
+        booking_page.wait_until_element_is_clickable_order()
         booking_page.click_are_you_sure_yes_button()
 
         assert booking_page.find_show_status_button().text == 'Посмотреть статус'

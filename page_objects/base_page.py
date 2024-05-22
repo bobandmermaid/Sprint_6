@@ -2,6 +2,7 @@ import allure
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from locators.base_page_locators import BasePageLocators
+from locators.order_page_locators import OrderPageLocators
 from data import Urls
 
 
@@ -41,20 +42,25 @@ class BasePage:
             expected_conditions.presence_of_element_located(locator)
         )
 
-    @allure.step('Дождаться, чтобы на элемент можно было нажать')
-    def wait_until_element_is_clickable(self, locator):
+    @allure.step('Дождаться загрузки элемента при проверке заказа')
+    def wait_until_element_is_visible_order(self):
         return WebDriverWait(self.driver, 6).until(
-            expected_conditions.element_to_be_clickable(locator)
+            expected_conditions.presence_of_element_located(BasePageLocators.next_button)
+        )
+
+    @allure.step('Дождаться, чтобы на элемент можно было нажать при проверке заказа')
+    def wait_until_element_is_clickable_order(self):
+        return WebDriverWait(self.driver, 6).until(
+            expected_conditions.element_to_be_clickable(OrderPageLocators.confidence_yes_button)
         )
 
     @allure.step('Принять cookies')
     def click_cookie_consent(self):
         return self.driver.find_element(*BasePageLocators.cookie_button).click()
 
-    @allure.step('Открыть и проверить новое окно')
-    def check_window(self):
-        original_window = self.driver.current_window_handle
-        for window_handle in self.driver.window_handles:
-            if window_handle != original_window:
-                self.driver.switch_to.window(window_handle)
-                break
+    @allure.step("Ожидание открытия второго окна")
+    def wait_window(self):
+        WebDriverWait(self.driver, 10).until(expected_conditions.number_of_windows_to_be(2))
+        self.driver.switch_to.window(self.driver.window_handles[-1])
+        WebDriverWait(self.driver, 10).until(
+            lambda driver: driver.current_url == Urls.REDIRECT_URL)
